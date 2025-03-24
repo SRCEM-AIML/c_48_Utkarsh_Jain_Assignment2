@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/jainutkarshh/StudentProject.git'
+                git 'https://github.com/SRCEM-AIML/c_48_Utkarsh_Jain_Assignment2.git'
             }
         }
         stage('Build Docker Image') {
