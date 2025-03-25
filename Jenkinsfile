@@ -1,22 +1,36 @@
 pipeline {
     agent any
+
+    environment {
+        IMAGE_NAME = 'utkarsh2005/django-docker'
+        CONTAINER_NAME = 'studentproject'
+    }
+
     stages {
-        stage('Clone Repo') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/SRCEM-AIML/c_48_Utkarsh_Jain_Assignment2.git'
+                git branch: 'main', url: 'https://github.com/vinayakmishra-11/StudentProject.git'
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t utkarsh2005/studentproject .'
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh 'docker push utkarsh2005/studentproject'
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat """
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                        docker push %IMAGE_NAME%
+                        """
+                    }
                 }
             }
         }
+
     }
 }
